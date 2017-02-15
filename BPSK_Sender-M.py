@@ -55,8 +55,8 @@ class BPSK_Sender1(gr.top_block):
         self.freq_xlating_fir_filter_BP = \
         filter.freq_xlating_fir_filter_ccc( \
             1, \
-            (firdes.band_pass (1,self.samp_rate,10000-sideband,10000+sideband,transition)), \
-            0, \
+            (firdes.band_pass (0.5,self.samp_rate,10000-sideband,10000+sideband,transition)), \
+            -carrier, \
             samp_rate
         )
 
