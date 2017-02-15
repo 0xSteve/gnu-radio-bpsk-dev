@@ -66,6 +66,8 @@ class BPSK_Sender1(gr.top_block):
           verbose=False,
           log=False,
           )
+
+
         self.blocks_wavfile_sink_1 = blocks.wavfile_sink("BPSK_output.wav", 1, 48000, 16)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(8)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((0.1, ))
@@ -84,16 +86,17 @@ class BPSK_Sender1(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_multiply_const_vxx_0, 0))    
-        self.connect((self.blocks_delay_0_0, 0), (self.blocks_file_sink_0_0, 0))    
-        self.connect((self.blocks_delay_0_0, 0), (self.blocks_file_sink_0_0_0, 0))    
         self.connect((self.blocks_file_source_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))    
-        self.connect((self.blocks_file_source_0, 0), (self.digital_constellation_modulator_0, 0))    
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_1, 0))    
-        self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_delay_0_0, 0))    
-        self.connect((self.digital_constellation_modulator_0, 0), (self.rational_resampler_xxx_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blocks_complex_to_real_0, 0))    
-        self.connect((self.rational_resampler_xxx_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
+        self.connect((self.blocks_file_source_0, 0), (self.digital_constellation_modulator_0, 0))
+        self.connect((self.digital_constellation_modulator_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blocks_complex_to_real_0, 0))
+        self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_multiply_const_vxx_0, 0))  
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_1, 0))
+        
+        self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_delay_0_0, 0))
+        self.connect((self.blocks_delay_0_0, 0), (self.blocks_file_sink_0_0, 0))    
+        self.connect((self.blocks_delay_0_0, 0), (self.blocks_file_sink_0_0_0, 0))     
 
     def get_sps(self):
         return self.sps
