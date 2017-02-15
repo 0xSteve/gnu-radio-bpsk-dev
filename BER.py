@@ -8,7 +8,6 @@ numpy.set_printoptions(threshold='nan')
 #print "Hello, Python below is your file"
 #filename= raw_input('ENTER YOUR  FIRST Filename: ')
 script, filename1, filename2, correlation = argv
-print(filename2)
 A1 = scipy.fromfile(open(filename1), dtype=scipy.uint8)
 #filename2= raw_input('ENTER YOUR  SECOND Filename: ')
 A2 = scipy.fromfile(open(filename2), dtype=scipy.uint8)
