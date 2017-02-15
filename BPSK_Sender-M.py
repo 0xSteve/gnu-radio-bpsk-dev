@@ -50,12 +50,16 @@ class BPSK_Sender1(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
-                interpolation=interpolation,
-                decimation=decimation,
-                taps=None,
-                fractional_bw=None,
+
+        # Band pass filter (centered at carrier, no down conversion)
+        self.freq_xlating_fir_filter_BP = \
+        filter.freq_xlating_fir_filter_ccc( \
+            1, \
+            (firdes.band_pass (1,self.samp_rate,10000-sideband,10000+sideband,transition)), \
+            0, \
+            samp_rate
         )
+
         #LP filter
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, (firdes.band_pass (0.5,samp_rate,10000-sideband,10000+sideband,transistion)), -carrier, samp_rate)
         self.digital_constellation_modulator_0 = digital.generic_mod(
@@ -68,14 +72,12 @@ class BPSK_Sender1(gr.top_block):
             log=False,
         )
 
-        # Band pass filter (centered at carrier, no down conversion)
-        self.freq_xlating_fir_filter_BP = \
-        filter.freq_xlating_fir_filter_ccc( \
-            1, \
-            (firdes.band_pass (1,self.samp_rate,self.carrier-self.sideband_rx, \
-        self.carrier+self.sideband_rx,self.transition)), \
-            0, \
-            self.samp_rate)
+        self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
+                interpolation=interpolation,
+                decimation=decimation,
+                taps=None,
+                fractional_bw=None,
+        )
 
         self.blocks_wavfile_sink_1 = blocks.wavfile_sink("BPSK_output.wav", 1, 48000, 16)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(8)
