@@ -1,0 +1,10 @@
+
+
+chmod +x gnu.sh
+
+then run the gnu script using ./gnu.sh
+
+Poly32(with-costas) DONE
+Poly64(with-costas) DONE
+Poly32NC(no-costas)
+Poly64NC(no-costas)
