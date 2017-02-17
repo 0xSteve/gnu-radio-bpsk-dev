@@ -9,7 +9,7 @@ receiver_type="resultsfilters64POLY"
 mkdir logs/$receiver_type
 NoF=7
 NoX=7
-python2.7 BPSK_Sender-M.py 1000
+python2.7 BPSK_Sender-M.py 3000
 #y is the number of arrival files you are trying to process (source depths)
 #j is the number of receiver depths
 for ((y=1; y<=$NoF; y=y+1))
