@@ -7,8 +7,8 @@ mkdir logs
 arrivalFilename="seatrial-"
 receiver_type="resultsfilters64POLY"
 mkdir logs/$receiver_type
-NoF=1 #7
-NoX=1 #7
+NoF=7
+NoX=7
 python2.7 BPSK_Sender-M.py 1000
 #y is the number of arrival files you are trying to process (source depths)
 #j is the number of receiver depths
