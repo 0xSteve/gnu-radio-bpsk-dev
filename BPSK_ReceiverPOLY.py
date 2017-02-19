@@ -47,17 +47,6 @@ class BPSK_ReceiverPOLY(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-
-        # Band pass filter (centered at carrier, no down conversion)
-        #ToDo update transition to be spelled correctly.
-        self.freq_xlating_fir_filter_BP = \
-        filter.freq_xlating_fir_filter_ccc( \
-            1, \
-            (firdes.band_pass (0.5,self.samp_rate,10000-sideband,10000+sideband,transistion)), \
-            -carrier, \
-            samp_rate
-        )
-
         self.rational_resampler_xxx_0_0 = filter.rational_resampler_ccc(
                 interpolation=decimation,
                 decimation=interpolation,
@@ -81,21 +70,15 @@ class BPSK_ReceiverPOLY(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-
-        self.connect((self.blocks_wavfile_source_0, 0), (self.blocks_float_to_complex_0, 0)) 
-        #self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
-        #self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_BP, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
-        #self.connect((self.freq_xlating_fir_filter_BP, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
-        self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.rational_resampler_xxx_0_0, 0))    
-        self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_throttle_1_0_0, 0))
-        self.connect((self.blocks_throttle_1_0_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
-        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_constellation_decoder_cb_0, 0))
+        self.connect((self.blocks_delay_1, 0), (self.blocks_file_sink_0, 0))    
+        self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))    
+        self.connect((self.blocks_throttle_1_0_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))    
+        self.connect((self.blocks_wavfile_source_0, 0), (self.blocks_float_to_complex_0, 0))    
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.digital_diff_decoder_bb_0, 0))    
-        self.connect((self.digital_diff_decoder_bb_0, 0), (self.blocks_delay_1, 0))
-        self.connect((self.blocks_delay_1, 0), (self.blocks_file_sink_0, 0))        
-            
-            
+        self.connect((self.digital_diff_decoder_bb_0, 0), (self.blocks_delay_1, 0))    
+        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_constellation_decoder_cb_0, 0))    
+        self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.rational_resampler_xxx_0_0, 0))    
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_throttle_1_0_0, 0))    
 
     def get_sps(self):
         return self.sps
@@ -136,7 +119,7 @@ class BPSK_ReceiverPOLY(gr.top_block):
 
     def set_sideband_rx(self, sideband_rx):
         self.sideband_rx = sideband_rx
-        self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes.low_pass(1, self.samp_rate*10, self.sideband_rx,1000)))
+        self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes.low_pass(1, self.samp_rate, carrier+self.sideband_rx,1000)))
 
     def get_sideband(self):
         return self.sideband
@@ -150,7 +133,7 @@ class BPSK_ReceiverPOLY(gr.top_block):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_1_0_0.set_sample_rate(self.samp_rate)
-        self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes.low_pass(1, self.samp_rate*10, self.sideband_rx,1000)))
+        self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes.low_pass(1, self.samp_rate, carrier+self.sideband_rx,1000)))
 
     def get_rrc_taps(self):
         return self.rrc_taps

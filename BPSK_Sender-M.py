@@ -35,8 +35,7 @@ class BPSK_Sender1(gr.top_block):
         self.qpsk = qpsk = digital.constellation_rect(([0.707+0.707j, -0.707+0.707j, -0.707-0.707j, 0.707-0.707j]), ([0, 1, 2, 3]), 4, 2, 2, 1, 1).base()
         self.preamble = preamble = [1,-1,1,-1,1,1,-1,-1,1,1,-1,1,1,1,-1,1,1,-1,1,-1,-1,1,-1,-1,1,1,1,-1,-1,-1,1,-1,1,1,1,1,-1,-1,1,-1,1,-1,-1,-1,1,1,-1,-1,-1,-1,1,-1,-1,-1,-1,-1,1,1,1,1,1,1,-1,-1]
         self.payload_size = payload_size = 10
-        script, inter = argv
-        self.interpolation = interpolation = int(inter)
+        self.interpolation = interpolation = 18000
         self.gap = gap = 0
         self.eb = eb = 0.35
         self.delay = delay = 0
@@ -50,39 +49,26 @@ class BPSK_Sender1(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-
-        # Band pass filter (centered at carrier, no down conversion)
-        self.freq_xlating_fir_filter_BP = \
-        filter.freq_xlating_fir_filter_ccc( \
-            1, \
-            (firdes.band_pass (0.5,self.samp_rate,10000-sideband,10000+sideband,transistion)), \
-            -carrier, \
-            samp_rate
-        )
-
-        #LP filter
-        self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, (firdes.band_pass (0.5,samp_rate,10000-sideband,10000+sideband,transistion)), -carrier, samp_rate)
-        self.digital_constellation_modulator_0 = digital.generic_mod(
-            constellation=constel,
-            differential=True,
-            samples_per_symbol=sps,
-            pre_diff_code=True,
-            excess_bw=0.35,
-            verbose=False,
-            log=False,
-        )
-
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
                 interpolation=interpolation,
                 decimation=decimation,
                 taps=None,
                 fractional_bw=None,
         )
-
+        self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, (firdes.band_pass (0.5,samp_rate,10000-sideband,10000+sideband,transistion)), -carrier, samp_rate)
+        self.digital_constellation_modulator_0 = digital.generic_mod(
+          constellation=constel,
+          differential=True,
+          samples_per_symbol=sps,
+          pre_diff_code=True,
+          excess_bw=0.35,
+          verbose=False,
+          log=False,
+          )
         self.blocks_wavfile_sink_1 = blocks.wavfile_sink("BPSK_output.wav", 1, 48000, 16)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(8)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((0.1, ))
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "TestData1", False)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "TestData2", False)
         self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, "inputBinary", False)
         self.blocks_file_sink_0_0_0.set_unbuffered(False)
         self.blocks_file_sink_0_0 = blocks.file_sink(gr.sizeof_char*1, "inputBinary2", False)
@@ -97,22 +83,16 @@ class BPSK_Sender1(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))    
-        self.connect((self.blocks_file_source_0, 0), (self.digital_constellation_modulator_0, 0))
-        self.connect((self.digital_constellation_modulator_0, 0), (self.rational_resampler_xxx_0, 0))
-        #I actually want the resamp to go to the BP filter.
-
-        #self.connect((self.rational_resampler_xxx_0, 0),(self.freq_xlating_fir_filter_BP, 0))
-        self.connect((self.rational_resampler_xxx_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
-        #now to connect the BP filter to the LP filter.
-        #self.connect((self.freq_xlating_fir_filter_BP, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blocks_complex_to_real_0, 0))
-        self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_multiply_const_vxx_0, 0))  
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_1, 0))
-        
-        self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_delay_0_0, 0))
+        self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_multiply_const_vxx_0, 0))    
         self.connect((self.blocks_delay_0_0, 0), (self.blocks_file_sink_0_0, 0))    
-        self.connect((self.blocks_delay_0_0, 0), (self.blocks_file_sink_0_0_0, 0))     
+        self.connect((self.blocks_delay_0_0, 0), (self.blocks_file_sink_0_0_0, 0))    
+        self.connect((self.blocks_file_source_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))    
+        self.connect((self.blocks_file_source_0, 0), (self.digital_constellation_modulator_0, 0))    
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_1, 0))    
+        self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_delay_0_0, 0))    
+        self.connect((self.digital_constellation_modulator_0, 0), (self.rational_resampler_xxx_0, 0))    
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blocks_complex_to_real_0, 0))    
+        self.connect((self.rational_resampler_xxx_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
 
     def get_sps(self):
         return self.sps
