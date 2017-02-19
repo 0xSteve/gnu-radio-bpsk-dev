@@ -68,10 +68,10 @@ class BPSK_Sender1(gr.top_block):
         self.blocks_wavfile_sink_1 = blocks.wavfile_sink("BPSK_output.wav", 1, 48000, 16)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(8)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((0.1, ))
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "TestData2", False)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "TestData1", False)
         self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, "inputBinary", False)
         self.blocks_file_sink_0_0_0.set_unbuffered(False)
-        self.blocks_file_sink_0_0 = blocks.file_sink(gr.sizeof_char*1, "inputBinary2", False)
+        self.blocks_file_sink_0_0 = blocks.file_sink(gr.sizeof_char*1, "inputBinary1", False)
         self.blocks_file_sink_0_0.set_unbuffered(False)
         
         
