@@ -101,10 +101,11 @@ class BPSK_Sender1(gr.top_block):
         self.connect((self.blocks_file_source_0, 0), (self.digital_constellation_modulator_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.rational_resampler_xxx_0, 0))
         #I actually want the resamp to go to the BP filter.
-        self.connect((self.rational_resampler_xxx_0, 0),(self.freq_xlating_fir_filter_BP, 0))
-        #self.connect((self.rational_resampler_xxx_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
+
+        #self.connect((self.rational_resampler_xxx_0, 0),(self.freq_xlating_fir_filter_BP, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
         #now to connect the BP filter to the LP filter.
-        self.connect((self.freq_xlating_fir_filter_BP, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
+        #self.connect((self.freq_xlating_fir_filter_BP, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blocks_complex_to_real_0, 0))
         self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_multiply_const_vxx_0, 0))  
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_1, 0))

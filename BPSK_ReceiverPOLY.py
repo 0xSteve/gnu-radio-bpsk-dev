@@ -27,7 +27,7 @@ class BPSK_ReceiverPOLY(gr.top_block):
         ##################################################
         self.sps = sps = 8
         self.nfilts = nfilts = 32
-        self.interpolation = interpolation = 3000 #144000 #change this one
+        self.interpolation = interpolation = 18000
         self.transistion = transistion = 100
         self.timing_loop_bw = timing_loop_bw = 6.28/100.0
         self.sideband_rx = sideband_rx = 500
@@ -64,7 +64,7 @@ class BPSK_ReceiverPOLY(gr.top_block):
                 taps=(rrc_taps),
                 fractional_bw=None,
         )
-        self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1, (filter.firdes.low_pass(1, samp_rate, sideband_rx,1000)), carrier, samp_rate)
+        self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1, (filter.firdes.low_pass(1, samp_rate, carrier+sideband_rx,1000)), carrier, samp_rate)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, (rrc_taps), nfilts*2, nfilts/2, 1.5, 1)
         self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(2)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(constel)
@@ -84,8 +84,9 @@ class BPSK_ReceiverPOLY(gr.top_block):
 
         self.connect((self.blocks_wavfile_source_0, 0), (self.blocks_float_to_complex_0, 0)) 
         #self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_BP, 0))
-        self.connect((self.freq_xlating_fir_filter_BP, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
+        #self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_BP, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
+        #self.connect((self.freq_xlating_fir_filter_BP, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
         self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.rational_resampler_xxx_0_0, 0))    
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_throttle_1_0_0, 0))
         self.connect((self.blocks_throttle_1_0_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
