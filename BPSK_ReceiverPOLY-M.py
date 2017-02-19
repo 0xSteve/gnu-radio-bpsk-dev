@@ -45,7 +45,7 @@ class BPSK_ReceiverPOLY(gr.top_block):
         self.phase_bw = phase_bw = 6.28/100.0
         self.noise_amp = noise_amp = probe_var/(10**(SNR/20))
         self.matched_filter = matched_filter = firdes.root_raised_cosine(nfilts, nfilts, 1, eb, int(11*sps*nfilts))
-        self.interpolation = interpolation = 60000
+        self.interpolation = interpolation = 1000
         self.eq_gain = eq_gain = 0.01
         self.delay = delay = 0
         self.decimation = decimation = 1
